@@ -32,6 +32,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import org.pokecentral.deforged.utils.OverlayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -64,12 +65,15 @@ public class OverlayScreenStateAllMixin {
 			int offset = 0;
 			++slot;
 			int yPos = topOffset + (int) ((float) slot * 30.0f) + 9 + offset;
+
 			if (pokemon != null) {
 				boolean isSentOut = SendoutListener.isInWorld(pokemon.getUUID(), mc.level);
 				ScreenHelper.drawImageQuad(Resources.textbox, matrix, (float) (leftText - 28), (float) (yPos - 10), 123.0F, 34.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+
 				float[] texturePair = StatusType.getTexturePos(pokemon.getStatus().type);
 				float textureX = texturePair[0];
 				float textureY = texturePair[1];
+
 				if (textureX != -1.0F && !pokemon.isFainted()) {
 					ScreenHelper.bindTexture(Resources.status);
 					ScreenHelper.simpleDrawImageQuad(matrix, (float) (leftText + 56), (float) (yPos + 1), 8.0F, 8.0F, textureX / 768.0F, textureY / 768.0F, (textureX + 240.0F) / 768.0F, (textureY + 240.0F) / 768.0F, 0.0F);
@@ -77,6 +81,7 @@ public class OverlayScreenStateAllMixin {
 
 				ITextComponent displayName = pokemon.getFormattedDisplayName();
 				ScreenHelper.drawString(matrix, fontRenderer, displayName, (float) (leftText - 2), (float) yPos, 16777215, false, true);
+
 				if (pokemon.getGender() == Gender.MALE && !pokemon.isEgg()) {
 					ScreenHelper.drawImageQuad(Resources.male, matrix, (float) (ScreenHelper.getStringWidth(displayName, true) + leftText - 1), (float) yPos, 5.0F, 8.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
 				} else if (pokemon.getGender() == Gender.FEMALE && !pokemon.isEgg()) {
@@ -84,22 +89,8 @@ public class OverlayScreenStateAllMixin {
 				}
 
 				ScreenHelper.drawImageQuad(pokemon.getBall().getGUISprite(), matrix, -3.0F, (float) (yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
-				ResourceLocation icon;
-				if (slot == selectedIndex) {
-					if (pokemon.isFainted()) {
-						icon = Resources.faintedSelected;
-					} else if (isSentOut) {
-						icon = Resources.releasedSelected;
-					} else {
-						icon = Resources.selected;
-					}
-				} else if (pokemon.isFainted()) {
-					icon = Resources.fainted;
-				} else if (isSentOut) {
-					icon = Resources.released;
-				} else {
-					icon = Resources.normal;
-				}
+
+				ResourceLocation icon = OverlayUtils.getOverlaySprite(pokemon, slot == selectedIndex, isSentOut);
 
 				ScreenHelper.drawImageQuad(icon, matrix, -3.0F, (float) (yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
 				ScreenHelper.drawImageQuad(pokemon.getSprite(), matrix, 1.0F, (float) (yPos - 6), 24.0F, 24.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);

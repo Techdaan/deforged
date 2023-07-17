@@ -31,6 +31,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import org.pokecentral.deforged.utils.OverlayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -47,67 +48,62 @@ public class OverlayScreenStateTopLeftLabelMixin {
 		int leftText = 30;
 		int yPos = 5;
 		Pokemon pokemon = party[selectedIndex];
-		boolean isSentOut = SendoutListener.isInWorld(pokemon.getUUID(), mc.level);
+
 		float textureX = -1.0F;
 		float textureY = -1.0F;
 		FontRenderer fontRenderer = mc.font;
 		ITextComponent displayName = pokemon.getFormattedDisplayName();
+
+		boolean isSentOut = SendoutListener.isInWorld(pokemon.getUUID(), mc.level);
+		ScreenHelper.drawImageQuad(Resources.textbox, matrix, (float) (leftText - 28), (float) (yPos - 10), 123.0F, 34.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+
 		float[] texturePair = StatusType.getTexturePos(pokemon.getStatus().type);
 		textureX = texturePair[0];
 		textureY = texturePair[1];
-		ScreenHelper.drawImageQuad(Resources.textbox, matrix, (float)(leftText - 28), (float)(yPos - 10), 123.0F, 34.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+
 		if (ClientStorageManager.party.inTemporaryMode()) {
 			Color color = ClientStorageManager.party.getTempPartyColor();
-			ScreenHelper.drawImageQuad(Resources.padlock, matrix, 30.0F, 5.0F, 10.0F, 10.0F, 0.0F, 0.0F, 1.0F, 1.0F, (float)color.getRed(), (float)color.getGreen(), (float)color.getBlue(), (float)color.getAlpha(), 0.0F);
+			ScreenHelper.drawImageQuad(Resources.padlock, matrix, 30.0F, 5.0F, 10.0F, 10.0F, 0.0F, 0.0F, 1.0F, 1.0F, (float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getAlpha(), 0.0F);
 		}
 
 		if (textureX != -1.0F && !pokemon.isFainted()) {
 			ScreenHelper.bindTexture(Resources.status);
-			ScreenHelper.simpleDrawImageQuad(matrix, (float)(leftText + 56), (float)(yPos + 1), 8.0F, 8.0F, textureX / 768.0F, textureY / 768.0F, (textureX + 240.0F) / 768.0F, (textureY + 240.0F) / 768.0F, 0.0F);
+			ScreenHelper.simpleDrawImageQuad(matrix, (float) (leftText + 56), (float) (yPos + 1), 8.0F, 8.0F, textureX / 768.0F, textureY / 768.0F, (textureX + 240.0F) / 768.0F, (textureY + 240.0F) / 768.0F, 0.0F);
 		}
 
 		if (pokemon.getGender() == Gender.MALE && !pokemon.isEgg()) {
-			ScreenHelper.drawImageQuad(Resources.male, matrix, (float)(ScreenHelper.getStringWidth(displayName, true) + leftText - 1), (float)yPos, 5.0F, 8.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+			ScreenHelper.drawImageQuad(Resources.male, matrix, (float) (ScreenHelper.getStringWidth(displayName, true) + leftText - 1), (float) yPos, 5.0F, 8.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
 		} else if (pokemon.getGender() == Gender.FEMALE && !pokemon.isEgg()) {
-			ScreenHelper.drawImageQuad(Resources.female, matrix, (float)(ScreenHelper.getStringWidth(displayName, true) + leftText - 1), (float)yPos, 5.0F, 8.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+			ScreenHelper.drawImageQuad(Resources.female, matrix, (float) (ScreenHelper.getStringWidth(displayName, true) + leftText - 1), (float) yPos, 5.0F, 8.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
 		}
 
-		ScreenHelper.drawString(matrix, fontRenderer, displayName, (float)(leftText - 2), (float)yPos, 16777215, false, true);
-		ScreenHelper.drawImageQuad(pokemon.getBall().getGUISprite(), matrix, -3.0F, (float)(yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
-		ResourceLocation rl;
-		if (pokemon.isFainted()) {
-			rl = Resources.faintedSelected;
-		} else if (isSentOut) {
-			rl = Resources.releasedSelected;
-		} else {
-			rl = Resources.selected;
-		}
+		ScreenHelper.drawString(matrix, fontRenderer, displayName, (float) (leftText - 2), (float) yPos, 16777215, false, true);
 
-		ScreenHelper.drawImageQuad(rl, matrix, -3.0F, (float)(yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
-		ScreenHelper.drawImageQuad(pokemon.getSprite(), matrix, 1.0F, (float)(yPos - 6), 24.0F, 24.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+		ScreenHelper.drawImageQuad(pokemon.getBall().getGUISprite(), matrix, -3.0F, (float) (yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+
+		ResourceLocation rl = OverlayUtils.getOverlaySprite(pokemon, isSentOut, true);
+
+		ScreenHelper.drawImageQuad(rl, matrix, -3.0F, (float) (yPos - 7), 32.0F, 32.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+		ScreenHelper.drawImageQuad(pokemon.getSprite(), matrix, 1.0F, (float) (yPos - 6), 24.0F, 24.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+
 		if (!pokemon.getHeldItem().isEmpty()) {
-			ScreenHelper.drawImageQuad(Resources.heldItem, matrix, 18.0F, (float)(yPos + 13), 6.0F, 6.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
+			ScreenHelper.drawImageQuad(Resources.heldItem, matrix, 18.0F, (float) (yPos + 13), 6.0F, 6.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F);
 		}
 
 		if (!pokemon.isEgg()) {
-			String levelString = I18n.get("gui.screenpokechecker.lvl", new Object[0]) + " " + pokemon.getPokemonLevel();
-			float var10002 = (float)(leftText - 1);
-			int var10003 = yPos + 1;
-			fontRenderer.getClass();
-			ScreenHelper.drawString(matrix, levelString, var10002, (float)(var10003 + 9), 16777215, false, true);
-			String var10001;
+			String levelString = I18n.get("gui.screenpokechecker.lvl") + " " + pokemon.getPokemonLevel();
+			float xOffset = (float) (leftText - 1);
+			int yOffset = yPos + 1;
+			ScreenHelper.drawString(matrix, levelString, xOffset, (float) (yOffset + 9), 16777215, false, true);
 			if (pokemon.isFainted()) {
-				var10001 = I18n.get("gui.creativeinv.fainted", new Object[0]);
-				var10002 = (float)(leftText + 1 + ScreenHelper.getStringWidth(levelString, true));
-				var10003 = yPos + 1;
-				fontRenderer.getClass();
-				ScreenHelper.drawString(matrix, var10001, var10002, (float)(var10003 + 9), 16777215, false, true);
+				xOffset = (float) (leftText + 1 + ScreenHelper.getStringWidth(levelString, true));
+				yOffset = yPos + 1;
+				ScreenHelper.drawString(matrix, I18n.get("gui.creativeinv.fainted"), xOffset, (float) (yOffset + 9), 16777215, false, true);
 			} else {
-				var10001 = I18n.get("nbt.hp", new Object[0]) + " " + pokemon.getHealth() + "/" + pokemon.getMaxHealth();
-				var10002 = (float)(leftText + 2 + ScreenHelper.getStringWidth(levelString, true));
-				var10003 = yPos + 1;
-				fontRenderer.getClass();
-				ScreenHelper.drawString(matrix, var10001, var10002, (float)(var10003 + 9), 16777215, false, true);
+				String text = I18n.get("nbt.hp") + " " + pokemon.getHealth() + "/" + pokemon.getMaxHealth();
+				xOffset = (float) (leftText + 2 + ScreenHelper.getStringWidth(levelString, true));
+				yOffset = yPos + 1;
+				ScreenHelper.drawString(matrix, text, xOffset, (float) (yOffset + 9), 16777215, false, true);
 			}
 		}
 	}

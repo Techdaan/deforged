@@ -8,10 +8,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "pixelmon.client.gui.ScreenHelperMixin",
+    "pixelmon.client.gui.PixelmonOverlayScreenMixin",
     "pixelmon.client.DefaultServerListMixin",
-    "pixelmon.api.screen.OverlayScreenStateAllMixin",
-    "pixelmon.api.screen.OverlayScreenStateBottomLeftLabelMixin",
-    "pixelmon.api.screen.OverlayScreenStateTopLeftLabelMixin"
+    "pixelmon.client.NPCChattingMixin"
   ]
 }

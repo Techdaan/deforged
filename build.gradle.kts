@@ -12,9 +12,9 @@ buildscript {
     }
 
     dependencies {
-        classpath(group = "net.minecraftforge.gradle", name = "ForgeGradle", version = "5.1.77") {
-            isChanging = true
-        }
+//        classpath(group = "net.minecraftforge.gradle", name = "ForgeGradle", version = "6.2") {
+//            isChanging = true
+//        }
 
         classpath("org.spongepowered:mixingradle:0.7.+")
     }
@@ -22,6 +22,7 @@ buildscript {
 
 plugins {
     id("java")
+    id("net.minecraftforge.gradle") version "[6.0.16,6.2)"
 }
 
 apply<UserDevPlugin>()
@@ -58,7 +59,7 @@ val fg = extensions["fg"] as DependencyManagementExtension
 dependencies {
     "minecraft"("net.minecraftforge:forge:$mcVersion-$forgeVersion")
 
-    implementation(fg.deobf("reforged:Pixelmon-1.16.5:9.1.5"))
+    implementation(fg.deobf("reforged:Pixelmon-1.20.2:9.2.6"))
 
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
